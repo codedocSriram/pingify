@@ -5,6 +5,12 @@ import bcrypt from "bcryptjs";
 export const signupController = async (req, res) => {
     const { fullName, email, password } = req.body;
     try {
+        if (!fullName || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Please fill in all fields.",
+            });
+        }
         if (password.length < 6) {
             return res.status(400).json({
                 success: false,

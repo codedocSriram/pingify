@@ -60,12 +60,10 @@ export const loginController = async (req, res) => {
     const { email, password } = req.body;
     try {
         if (!email || !password) {
-            return res
-                .status(400)
-                .json({
-                    success: false,
-                    message: "Fill in all fields to login",
-                });
+            return res.status(400).json({
+                success: false,
+                message: "Fill in all fields to login",
+            });
         }
         const user = await User.findOne({ email });
         if (!user) {
@@ -97,5 +95,16 @@ export const loginController = async (req, res) => {
 
 export const logoutController = async (req, res) => {
     try {
-    } catch (error) {}
+        res.cookie("jwt", "", { maxAge: 0 });
+        res.status(200).json({
+            success: true,
+            message: "Logged out successfully!",
+        });
+    } catch (error) {
+        console.log("Error occured in logout controller", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Error logging out",
+        });
+    }
 };

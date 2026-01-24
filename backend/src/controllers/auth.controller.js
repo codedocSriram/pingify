@@ -24,8 +24,8 @@ export const signupController = async (req, res) => {
                 message: "Account with this email id already exists!",
             });
         }
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        // const salt = await bcrypt.genSalt(10); -- passed salt directly because this is making api slower
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
             fullName,

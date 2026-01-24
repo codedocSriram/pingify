@@ -1,6 +1,7 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signupController = async (req, res) => {
     const { fullName, email, password } = req.body;
@@ -105,6 +106,39 @@ export const logoutController = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error logging out",
+        });
+    }
+};
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { profilePic } = req.body;
+        const userId = req.user._id; //user prop added to the req because this req is cominig from auth.middleware.js (again this is just me taking notes, not written by AI)
+        if (!profilePic) {
+            return res
+                .status(400)
+                .json({ success: false, message: "Profile pic is required" });
+        }
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                profilePic: uploadResponse.secure_url,
+            },
+            { new: true },
+        );
+        res.status(200).json({
+            _id: updatedUser._id,
+            fullName: updatedUser._id,
+            email: updatedUser.email,
+            profilePic: updatedUser.profilePic,
+        });
+    } catch (error) {
+        console.log("Error occured in updateProfile controller", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Error updating profilePic",
         });
     }
 };

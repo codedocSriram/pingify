@@ -1,9 +1,16 @@
 import express from "express";
-import authRouter from "./routes/auth.router.js";
-const app = express();
+import dotenv from "dotenv";
 
+import { connectDB } from "./lib/db.js";
+
+import authRouter from "./routes/auth.router.js";
+
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 3000;
 app.use("/api/auth", authRouter);
 
-app.listen(3000, () => {
-    console.log("Server is runnin in port 3000!");
+app.listen(PORT, () => {
+    console.log("Server is runnin on port", PORT);
+    connectDB();
 });

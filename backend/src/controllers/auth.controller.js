@@ -24,7 +24,7 @@ export const signupController = async (req, res) => {
                 message: "Account with this email id already exists!",
             });
         }
-        // const salt = await bcrypt.genSalt(10); -- passed salt directly because this is making api slower
+        // const salt = await bcrypt.genSalt(10); -- passed salt directly below because this is making api slower
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
@@ -57,8 +57,42 @@ export const signupController = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
+    const { email, password } = req.body;
     try {
-    } catch (error) {}
+        if (!email || !password) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    message: "Fill in all fields to login",
+                });
+        }
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res
+                .status(404)
+                .json({ success: false, message: "Invalid credentials" });
+        }
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return res
+                .status(404)
+                .json({ success: false, message: "Invalid credentials" });
+        }
+        generateToken(user._id, res);
+        res.status(200).json({
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            profilePic: user.profilePic,
+        });
+    } catch (error) {
+        console.log("Error occured in login controller", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Error occured while logging in",
+        });
+    }
 };
 
 export const logoutController = async (req, res) => {

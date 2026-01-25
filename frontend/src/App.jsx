@@ -1,15 +1,29 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import Navbar from "./components/Navbar";
+import HomePage from "./pages/HomePage";
+import SignUpPage from "./pages/SignUpPage";
+import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
+import { Routes, Route } from "react-router-dom";
+import { axiosInstance } from "./lib/axios";
+import { useAuthStore } from "./store/useAuthStore";
 const App = () => {
+    const { authUser, checkAuth } = useAuthStore();
+    useEffect(() => {
+        checkAuth();
+    }, []);
+    console.log(authUser);
     return (
-        <div className="text-red-500">
-            <button class="btn btn-active">Default</button>
-            <button class="btn btn-active btn-neutral">Neutral</button>
-            <button class="btn btn-active btn-primary">Primary</button>
-            <button class="btn btn-active btn-secondary">Secondary</button>
-            <button class="btn btn-active btn-accent">Accent</button>
-            <button class="btn btn-active btn-ghost">Ghost</button>
-            <button class="btn btn-active btn-link">Link</button>
+        <div>
+            <Navbar />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+            </Routes>
         </div>
     );
 };

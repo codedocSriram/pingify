@@ -25,7 +25,11 @@ export const useAuthStore = create((set) => ({
             Set({ authUser: res.data });
             toast.success("Account created successfully!");
         } catch (error) {
-            toast.error("Something went wrong!");
+            if (error.status === 409) {
+                toast.error("Account already exists, try loging in");
+            } else {
+                toast.error("Something went wrong, please try again");
+            }
         } finally {
             set({ isSigningUp: false });
         }

@@ -53,7 +53,6 @@ const SignUpPage = () => {
               group-hover:bg-primary/20 transition-colors"
                             >
                                 {/* <MessageSquare className="size-6 text-primary" /> */}
-
                                 <img
                                     src="../../public/pingifyLogo.svg"
                                     className="size-12 rounded-md"

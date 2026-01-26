@@ -5,14 +5,14 @@ export const useAuthStore = create((set) => ({
     authUser: null,
     isSigningUp: false,
     isLoggingIn: false,
-    usUpdatingProfile: false,
+    isUpdatingProfile: false,
     isCheckingAuth: true,
     checkAuth: async () => {
         try {
             const res = await axiosInstance.get("/auth/check");
             set({ authUser: res.data });
         } catch (error) {
-            console.log("Error in checkAuth:", error.message);
+            toast.error(error.response.data.message);
             set({ authUser: null });
         } finally {
             set({ isCheckingAuth: false });
@@ -22,14 +22,10 @@ export const useAuthStore = create((set) => ({
         set({ isSigningUp: true });
         try {
             const res = await axiosInstance.post("/auth/signup", data);
-            Set({ authUser: res.data });
+            set({ authUser: res.data });
             toast.success("Account created successfully!");
         } catch (error) {
-            if (error.status === 409) {
-                toast.error("Account already exists, try loging in");
-            } else {
-                toast.error("Something went wrong, please try again");
-            }
+            toast.error(error.response.data.message);
         } finally {
             set({ isSigningUp: false });
         }
@@ -53,6 +49,18 @@ export const useAuthStore = create((set) => ({
             toast.success("Logged out successfully!");
         } catch (error) {
             toast.error("Something went wrong!");
+        }
+    },
+    updateProfile: async (data) => {
+        set({ isUpdatingProfile: true });
+        try {
+            const res = await axiosInstance.post("/auth/update-profile", data);
+            set({ authUser: res.data });
+            toast.success("Profile pic updated");
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            set({ isUpdatingProfile: false });
         }
     },
 }));

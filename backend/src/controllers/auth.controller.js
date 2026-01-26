@@ -20,7 +20,7 @@ export const signupController = async (req, res) => {
         }
         const user = await User.findOne({ email });
         if (user) {
-            return res.status(409).json({
+            return res.status(400).json({
                 success: false,
                 message: "Account with this email id already exists!",
             });
@@ -34,8 +34,8 @@ export const signupController = async (req, res) => {
             password: hashedPassword,
         });
         if (newUser) {
-            generateToken(newUser._id, res);
             await newUser.save();
+            generateToken(newUser._id, res);
             res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,

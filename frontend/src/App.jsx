@@ -18,7 +18,7 @@ const App = () => {
     useEffect(() => {
         checkAuth();
     }, []);
-    console.log(authUser);
+    // console.log(authUser);
     if (isCheckingAuth && !authUser) {
         return (
             <div

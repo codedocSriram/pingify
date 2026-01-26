@@ -5,7 +5,6 @@ import { axiosInstance } from "../lib/axios";
 export const useChatStore = create((set) => ({
     messages: [],
     users: [],
-    onlineUsers: [],
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
@@ -15,7 +14,7 @@ export const useChatStore = create((set) => ({
             const res = await axiosInstance.get("/messages/users");
             set({ users: res.data });
         } catch (error) {
-            toast.error(error.response.data.message);
+            toast.error("Somethin broke!" + error);
         } finally {
             set({ isUsersLoading: false });
         }

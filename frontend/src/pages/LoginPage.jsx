@@ -37,7 +37,7 @@ const LoginPage = () => {
                                 Welcome Back
                             </h1>
                             <p className="text-base-content/60">
-                                Sign in to your account
+                                Login and lets start pinging...
                             </p>
                         </div>
                     </div>
@@ -113,10 +113,10 @@ const LoginPage = () => {
                             disabled={isLoggingIn}
                         >
                             {isLoggingIn ? (
-                                <>
+                                <React.Fragment>
                                     <Loader2 className="h-5 w-5 animate-spin" />
                                     Loading...
-                                </>
+                                </React.Fragment>
                             ) : (
                                 "Login"
                             )}

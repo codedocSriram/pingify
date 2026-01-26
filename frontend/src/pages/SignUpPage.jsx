@@ -23,12 +23,16 @@ const SignUpPage = () => {
     });
     const { signup, isSigningUp } = useAuthStore();
     const validateForm = () => {
-        if (!formData.fullName.trim())
-            return toast.error("Full name is required");
-        if (!formData.email.trim()) return toast.error("Email is required");
+        if (
+            !formData.fullName.trim() ||
+            !formData.email.trim() ||
+            !formData.password
+        )
+            return toast.error("All fields required!");
+        if (formData.fullName.trim().length <= 2)
+            return toast.error("Please provide your fullname");
         if (!/\S+@\S+\.\S+/.test(formData.email))
-            return toast.error("Invalid email format");
-        if (!formData.password) return toast.error("Password is required");
+            return toast.error("Please provide a valid email");
         if (formData.password.length < 6)
             return toast.error("Password must be at least 6 characters");
 
@@ -159,10 +163,10 @@ const SignUpPage = () => {
                             disabled={isSigningUp}
                         >
                             {isSigningUp ? (
-                                <>
+                                <React.Fragment>
                                     <Loader2 className="size-5 animate-spin" />
                                     Loading...
-                                </>
+                                </React.Fragment>
                             ) : (
                                 "Create Account"
                             )}

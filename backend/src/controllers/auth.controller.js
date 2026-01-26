@@ -83,6 +83,8 @@ export const loginController = async (req, res) => {
             _id: user._id,
             fullName: user.fullName,
             email: user.email,
+
+            createdAt: user.createdAt,
             profilePic: user.profilePic,
         });
     } catch (error) {
@@ -132,6 +134,8 @@ export const updateProfile = async (req, res) => {
             _id: updatedUser._id,
             fullName: updatedUser._id,
             email: updatedUser.email,
+
+            createdAt: updatedUser.createdAt,
             profilePic: updatedUser.profilePic,
         });
     } catch (error) {

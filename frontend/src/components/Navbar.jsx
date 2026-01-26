@@ -39,7 +39,7 @@ const Navbar = () => {
                         </Link>
 
                         {authUser && (
-                            <>
+                            <React.Fragment>
                                 <Link
                                     to={"/profile"}
                                     className={`btn btn-sm gap-2`}
@@ -59,7 +59,7 @@ const Navbar = () => {
                                         Logout
                                     </span>
                                 </button>
-                            </>
+                            </React.Fragment>
                         )}
                     </div>
                 </div>

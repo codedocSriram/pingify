@@ -12,6 +12,8 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get("/auth/check");
             set({ authUser: res.data });
         } catch (error) {
+            if (error.response.status === 409)
+                return toast.error("Please login/signup.");
             toast.error(error.response.data.message);
             set({ authUser: null });
         } finally {

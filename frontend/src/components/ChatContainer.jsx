@@ -56,7 +56,7 @@ const ChatContainer = () => {
                             </time>
                         </div>
                         <div
-                            className={`chat-bubble flex flex-col ${message.senderId === authUser._id ? "chat-bubble-primary" : ""}`}
+                            className={`chat-bubble flex flex-col ${message.senderId === authUser._id ? "chat-bubble-primary" : "chat-bubble bg-base-300 text-inherit"}`}
                         >
                             {message.image && (
                                 <img

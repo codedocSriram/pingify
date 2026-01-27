@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageSkeleton from "./skeletons/MessageSkeleon";
 import MessageInput from "./MessageInput";
 import { formatMessageTime } from "../lib/utils";
 import { useAuthStore } from "../store/useAuthStore";
+import { useThemeStore } from "../store/useThemeStore";
 const ChatContainer = () => {
     const { messages, getMessages, isMessagesLoading, selectedUser } =
         useChatStore();
@@ -32,7 +33,7 @@ const ChatContainer = () => {
                 {messages.map((message) => (
                     <div
                         key={message._id}
-                        className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+                        className={`chat ${message.senderId === authUser._id ? "chat-end " : "chat-start  "}`}
                         ref={messageEndRef}
                     >
                         <div className=" chat-image avatar">
@@ -54,7 +55,9 @@ const ChatContainer = () => {
                                 {formatMessageTime(message.createdAt)}
                             </time>
                         </div>
-                        <div className="chat-bubble flex flex-col">
+                        <div
+                            className={`chat-bubble flex flex-col ${message.senderId === authUser._id ? "chat-bubble-primary" : ""}`}
+                        >
                             {message.image && (
                                 <img
                                     src={message.image}
@@ -62,6 +65,7 @@ const ChatContainer = () => {
                                     className="sm:max-w-[200px] rounded-md mb-2"
                                 />
                             )}
+
                             {message.text && <p>{message.text}</p>}
                         </div>
                     </div>

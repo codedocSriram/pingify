@@ -3,9 +3,11 @@ import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageSkeleton from "./skeletons/MessageSkeleon";
 import MessageInput from "./MessageInput";
+import AlertMessage from "./AlertMessage";
 import { formatMessageTime } from "../lib/utils";
 import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
+import toast from "react-hot-toast";
 const ChatContainer = () => {
     const {
         messages,
@@ -14,6 +16,7 @@ const ChatContainer = () => {
         selectedUser,
         subscribeToMessages,
         unsubscribeFromMessages,
+        alertUser,
     } = useChatStore();
     const { authUser } = useAuthStore();
     const messageEndRef = useRef(null);

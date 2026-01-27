@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
+import AlertMessage from "../components/AlertMessage";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
 export const useChatStore = create((set, get) => ({
@@ -8,6 +9,7 @@ export const useChatStore = create((set, get) => ({
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
+
     getUsers: async () => {
         try {
             const res = await axiosInstance.get("/messages/users");
@@ -61,7 +63,9 @@ export const useChatStore = create((set, get) => ({
         socket.on("newMessage", (newMessage) => {
             const isMessageSentFromSelectedUser =
                 newMessage.senderId === selectedUser._id;
+
             if (!isMessageSentFromSelectedUser) {
+                toast.success("new message recieved, check inbox");
                 return;
             }
             set({

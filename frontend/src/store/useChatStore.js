@@ -13,7 +13,6 @@ export const useChatStore = create((set, get) => ({
             const res = await axiosInstance.get("/messages/users");
             set({ users: res.data });
         } catch (err) {
-            console.log(err);
             toast.error("Something broke!" + err);
         } finally {
             set({ isUsersLoading: false });
@@ -29,7 +28,7 @@ export const useChatStore = create((set, get) => ({
             if (err.response?.data.message) {
                 return toast.error(err.response?.data.message);
             }
-            console.log(err);
+
             toast.error("Something went worng!");
         } finally {
             set({ isMessagesLoading: false });
@@ -47,7 +46,7 @@ export const useChatStore = create((set, get) => ({
             if (err.response?.data.message) {
                 return toast.error(err.response.data.message);
             }
-            console.log(err);
+
             toast.error("Error occured while sending message");
         }
     },

@@ -24,7 +24,6 @@ export const useAuthStore = create((set, get) => ({
             if (err.response?.status === 401) {
                 return toast.error("Please login/signup first");
             } else {
-                console.log(err);
                 toast.error("Please login/signup first");
             }
             set({ authUser: null });
@@ -44,7 +43,6 @@ export const useAuthStore = create((set, get) => ({
             if (err.response?.status === 400) {
                 return toast.error(err.response.data.message);
             } else {
-                console.log(err);
                 return toast.error("Oops, something went wrong!");
             }
         } finally {
@@ -65,7 +63,6 @@ export const useAuthStore = create((set, get) => ({
             } else if (err.response?.status === 404) {
                 return toast.error(err.response.data.message);
             } else {
-                console.log(err);
                 toast.error("Oops, something went worng");
             }
         } finally {
@@ -80,7 +77,6 @@ export const useAuthStore = create((set, get) => ({
             const { disconnectSocket } = get();
             disconnectSocket();
         } catch (err) {
-            console.log(err);
             toast.error("Something went wrong!", err);
         }
     },
@@ -94,7 +90,6 @@ export const useAuthStore = create((set, get) => ({
             if (err.response?.data.message) {
                 return toast.error(err.response.data.message);
             } else {
-                console.log(err);
                 return toast.error("Unable to send image, please try later");
             }
         } finally {

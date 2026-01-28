@@ -130,6 +130,7 @@ const LoginPage = () => {
                                 Create account
                             </Link>
                         </p>
+                        <p>© 2026 Sriram Annadurai</p>
                     </div>
                 </div>
             </div>

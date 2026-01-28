@@ -179,9 +179,10 @@ const SignUpPage = () => {
                                 Login
                             </Link>
                         </p>
+                        <p className="text-base-content/60">
+                            © 2026 Sriram Annadurai
+                        </p>
                     </div>
-
-                    <p>© 2026 Sriram Annadurai</p>
                 </div>
             </div>
             {/* Rigth side of the signup page */}

@@ -96,7 +96,6 @@ const ChatContainer = () => {
                     </div>
                 ))}
             </div>
-
             <MessageInput />
         </div>
     );

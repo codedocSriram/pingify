@@ -95,11 +95,6 @@ const ChatContainer = () => {
                         </div>
                     </div>
                 ))}
-                <div>
-                    <p id="footer-text" class="mt-6 text-sm text-gray-400">
-                        © 2026 Sriram Annadurai
-                    </p>
-                </div>
             </div>
 
             <MessageInput />

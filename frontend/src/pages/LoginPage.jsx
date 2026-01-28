@@ -29,7 +29,7 @@ const LoginPage = () => {
               transition-colors"
                             >
                                 <img
-                                    src="../../public/pingifyLogo.svg"
+                                    src="/pingifyLogo.svg"
                                     className="size-12 rounded-md"
                                 />
                             </div>

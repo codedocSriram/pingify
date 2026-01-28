@@ -57,7 +57,7 @@ const SignUpPage = () => {
               group-hover:bg-primary/20 transition-colors"
                             >
                                 <img
-                                    src="../../public/pingifyLogo.svg"
+                                    src="/pingifyLogo.svg"
                                     className="size-12 rounded-md"
                                 />
                             </div>

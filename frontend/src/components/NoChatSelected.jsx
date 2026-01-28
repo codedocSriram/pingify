@@ -12,7 +12,7 @@ const NoChatSelected = () => {
              justify-center animate-bounce"
                         >
                             <img
-                                src="../../public/pingifyLogo.svg"
+                                src="/pingifyLogo.svg"
                                 className="w-12 h-12 text-primary"
                             />
                         </div>

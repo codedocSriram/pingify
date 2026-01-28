@@ -18,7 +18,7 @@ const Navbar = () => {
                         >
                             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
                                 <img
-                                    src="../../public/pingifyLogo.svg"
+                                    src="/pingifyLogo.svg"
                                     className="size-9 rounded-md"
                                 />
                             </div>

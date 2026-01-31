@@ -13,6 +13,7 @@ import {
     Lock,
     Loader2,
 } from "lucide-react";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 
 const SignUpPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -157,6 +158,7 @@ const SignUpPage = () => {
                                 </button>
                             </div>
                         </div>
+                        <PasswordStrengthMeter password={formData.password} />
                         <button
                             type="submit"
                             className="btn btn-primary w-full"

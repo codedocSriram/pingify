@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const usersignupSchema = new mongoose.Schema(
     {
         email: {
             type: String,
@@ -16,26 +16,17 @@ const userSchema = new mongoose.Schema(
             required: true,
             minlength: 6,
         },
-        profilePic: {
+        verificationToken: {
             type: String,
-            default: "",
+            required: true,
         },
-        lastLogin: {
+        createdAt: {
             type: Date,
             default: Date.now,
+            expires: 120, // 2 minutes (120 seconds)
         },
-        isVerified: {
-            type: Boolean,
-            default: false,
-        },
-        resetPasswordToken: String,
-        resetPasswordExpiresAt: Date,
-        verificationToken: String,
-        verificationTokenExpiresAt: Date,
     },
     { timestamps: true },
 );
 
-const User = mongoose.model("User", userSchema);
-
-export default User;
+export const Usersignup = mongoose.model("Usersignup", usersignupSchema);

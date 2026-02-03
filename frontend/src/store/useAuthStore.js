@@ -109,6 +109,8 @@ export const useAuthStore = create((set, get) => ({
                     "Error sending reset password mail",
             });
             toast.error(error.response?.data.message);
+        } finally {
+            set({ isLoading: false, error: null });
         }
     },
     resetPassword: async (token, password) => {
@@ -128,6 +130,8 @@ export const useAuthStore = create((set, get) => ({
                     error.response.data.message || "Error resetting password",
             });
             throw error;
+        } finally {
+            set({ isLoading: false, error: null });
         }
     },
     login: async (data) => {
@@ -147,7 +151,7 @@ export const useAuthStore = create((set, get) => ({
                 toast.error("Oops, something went worng");
             }
         } finally {
-            set({ isLoggingIn: false });
+            set({ isLoggingIn: false, error: null });
         }
     },
     logout: async () => {

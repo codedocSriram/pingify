@@ -261,7 +261,7 @@ export const updateProfile = async (req, res) => {
         );
         res.status(200).json({
             _id: updatedUser._id,
-            fullName: updatedUser._id,
+            fullName: updatedUser.fullName,
             email: updatedUser.email,
 
             createdAt: updatedUser.createdAt,

@@ -14,8 +14,13 @@ export const useAuthStore = create((set, get) => ({
     isCheckingAuth: true,
     onlineUsers: [],
     socket: null,
+    tempUser: null,
+    error: null,
+    isLoading: false,
+    message: null,
 
     checkAuth: async () => {
+        set({ isCheckingAuth: true, error: null });
         try {
             const res = await axiosInstance.get("/auth/check");
             set({ authUser: res.data });
@@ -35,19 +40,94 @@ export const useAuthStore = create((set, get) => ({
     signup: async (data) => {
         set({ isSigningUp: true });
         try {
-            const res = await axiosInstance.post("/auth/signup", data);
-            set({ authUser: res.data });
-            toast.success("Account created successfully!");
-            const { connectSocket } = get();
-            connectSocket();
+            const response = await axiosInstance.post("/auth/signup", {
+                fullName: data.fullName,
+                email: data.email,
+                password: data.password,
+            });
+
+            set({ tempUser: response.data.tempUser });
+            toast.success("Verify your email");
+            return response;
         } catch (err) {
+            set({
+                error: err.response.data.message || "Error signing up",
+                isLoading: false,
+                tempUser: null,
+                isSigningUp: false,
+            });
             if (err.response?.status === 400) {
                 return toast.error(err.response.data.message);
             } else {
                 return toast.error("Oops, something went wrong!");
             }
         } finally {
+            set({ isLoading: false, isSigningUp: false });
+        }
+    },
+    verifyEmail: async (code) => {
+        const email = localStorage.getItem("email");
+        set({ isLoading: true, error: null });
+        try {
+            const response = await axiosInstance.post("/auth/verify-email", {
+                email: email,
+                code: code,
+            });
+
+            set({ authUser: response.data.user });
+            localStorage.removeItem("email");
+            const { connectSocket } = get();
+            connectSocket();
+            localStorage.removeItem("email");
+            set({ tempUser: null });
+            return response;
+        } catch (error) {
+            set({
+                error: error.response?.data.message || error.message,
+                isLoading: false,
+            });
+            toast.error(error.message);
+            throw error;
+        } finally {
             set({ isSigningUp: false });
+        }
+    },
+    forgotPassword: async (email) => {
+        set({ isLoading: true, error: null });
+        localStorage.setItem("email", email);
+        try {
+            const response = await axiosInstance.post("/auth/forgot-password", {
+                email,
+            });
+            set({ message: response.data.message, isLoading: false });
+            toast.success(response.data.message);
+        } catch (error) {
+            set({
+                isLoading: false,
+                error:
+                    error.response.data.message ||
+                    "Error sending reset password mail",
+            });
+            toast.error(error.response?.data.message);
+        }
+    },
+    resetPassword: async (token, password) => {
+        set({ isLoading: true, error: null });
+        const email = localStorage.getItem("email");
+        try {
+            const response = await axiosInstance.post(
+                `/auth/reset-password/${token}`,
+                { password, email },
+            );
+            set({ message: response.data.message, isLoading: false });
+            localStorage.removeItem("email");
+        } catch (error) {
+            set({
+                isLoading: false,
+                error:
+                    error.response.data.message || "Error resetting password",
+            });
+            throw error;
         }
     },
     login: async (data) => {

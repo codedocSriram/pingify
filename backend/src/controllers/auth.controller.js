@@ -1,11 +1,18 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
+import Usersignup from "../models/usersignup.model.js";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinary.js";
-
+import {
+    sendVerificationEmail,
+    sendWelcomeMail,
+    sendPasswordResetEmail,
+    sendResetSuccessEmail,
+} from "../mailService/email.js";
 export const signupController = async (req, res) => {
-    const { fullName, email, password } = req.body;
     try {
+        const { fullName, email, password } = req.body;
         if (!fullName || !email || !password) {
             return res.status(400).json({
                 success: false,
@@ -25,35 +32,83 @@ export const signupController = async (req, res) => {
                 message: "Account with this email id already exists!",
             });
         }
-        // const salt = await bcrypt.genSalt(10); -- passed salt directly below because this is making api slower
-        const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({
-            fullName,
+        const signupUser = await Usersignup.findOne({
             email,
-            password: hashedPassword,
         });
-        if (newUser) {
-            await newUser.save();
-            generateToken(newUser._id, res);
-            res.status(201).json({
-                _id: newUser._id,
-                fullName: newUser.fullName,
-                email: newUser.email,
-                profilePic: newUser.profilePic,
-            });
-        } else {
-            res.status(400).json({
+
+        if (signupUser) {
+            return res.status(400).json({
                 success: false,
-                message: "Invalid user data",
+                message: "OTP already sent, try after few minutes",
             });
         }
+        // const salt = await bcrypt.genSalt(10); -- passed salt directly below because this is making api slower
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const verificationToken = Math.floor(
+            100000 + Math.random() * 900000,
+        ).toString();
+        const newSignUp = new Usersignup({
+            email: email,
+            fullName: fullName,
+            password: hashedPassword,
+            verificationToken: verificationToken,
+        });
+        await newSignUp.save();
+
+        await sendVerificationEmail(email, verificationToken);
+        res.status(201).json({
+            success: true,
+            message: "Verify email to continue",
+            tempUser: {
+                ...newSignUp._doc,
+                verificationToken: undefined,
+                password: undefined,
+            },
+        });
     } catch (error) {
-        console.log("Error occured in signUp controller", error.message);
         res.status(500).json({
             success: false,
-            message: "Error occured while signing up user",
+            message: error.message,
         });
+    }
+};
+
+export const verifyEmail = async (req, res) => {
+    try {
+        const { email, code } = req.body;
+        const signupUser = await Usersignup.findOne({
+            email: email,
+            verificationToken: code,
+        });
+        if (!signupUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid/expired verifiation code",
+            });
+        }
+        const user = new User({
+            fullName: signupUser.fullName,
+            password: signupUser.password,
+            email: email,
+            isVerified: true,
+        });
+        await user.save();
+        await sendWelcomeMail(user.email, user.fullName);
+        generateToken(user._id, res);
+        res.status(201).json({
+            success: true,
+            user: {
+                _id: user._id,
+                fullName: user.fullName,
+                email: user.email,
+                profilePic: user.profilePic,
+            },
+            message: "User signup successful",
+        });
+    } catch (error) {
+        console.log("Error in code verification:", error.message);
+        res.status(400).json({ success: false, message: error.message });
     }
 };
 
@@ -92,6 +147,80 @@ export const loginController = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error occured while logging in",
+        });
+    }
+};
+
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "No account with mentioned Email exists",
+            });
+        }
+        const isExpired = Date.now() > user.resetPasswordExpiresAt;
+        if (isExpired) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpiresAt = undefined;
+        }
+
+        if (user.resetPasswordToken) {
+            return res.status(404).json({
+                success: false,
+                message:
+                    "A reset link already sent to your email, please check your email",
+            });
+        }
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        const expiresAt = Date.now() + 1 * 60 * 60 * 1000; //2 hours
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpiresAt = expiresAt;
+        await user.save();
+        await sendPasswordResetEmail(
+            user.email,
+            `${process.env.CLIENT_URL}/reset-password/${resetToken}`,
+        );
+        return res.status(200).json({
+            success: true,
+            message: "Reset OTP sent to registered email",
+        });
+    } catch (error) {
+        console.log("Error in forgotPassword controller:", error.message);
+        res.status(500).json({
+            success: false,
+            message: "internal server error",
+        });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { password, email } = req.body;
+        const user = await User.findOne({
+            email: email,
+            resetPasswordToken: token,
+            resetPasswordExpiresAt: { $gt: Date.now() },
+        });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiresAt = undefined;
+        await user.save();
+        await sendResetSuccessEmail(user.email);
+        res.status(200).json({
+            success: true,
+            message: "Password reset successful!",
+        });
+    } catch (error) {
+        console.log("Error in resetPassword controller:", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Error resettign password",
         });
     }
 };

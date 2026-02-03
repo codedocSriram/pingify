@@ -29,4 +29,6 @@ const usersignupSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
-export const Usersignup = mongoose.model("Usersignup", usersignupSchema);
+const Usersignup = mongoose.model("Usersignup", usersignupSchema);
+
+export default Usersignup;

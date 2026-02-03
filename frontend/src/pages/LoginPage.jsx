@@ -106,7 +106,15 @@ const LoginPage = () => {
                                 </button>
                             </div>
                         </div>
-
+                        <p className="text-base-content/60">
+                            Forgot password?{" "}
+                            <Link
+                                to="/forgot-password"
+                                className="link link-primary"
+                            >
+                                Forgot password
+                            </Link>
+                        </p>
                         <button
                             type="submit"
                             className="btn btn-primary w-full"
@@ -130,6 +138,7 @@ const LoginPage = () => {
                                 Create account
                             </Link>
                         </p>
+
                         <p>© 2026 Sriram Annadurai</p>
                     </div>
                 </div>

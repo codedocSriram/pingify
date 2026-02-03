@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import toast from "react-hot-toast";
@@ -22,7 +22,8 @@ const SignUpPage = () => {
         email: "",
         password: "",
     });
-    const { signup, isSigningUp } = useAuthStore();
+    const navigate = useNavigate();
+    const { signup, isSigningUp, error } = useAuthStore();
     const validateForm = () => {
         if (
             !formData.fullName.trim() ||
@@ -39,10 +40,18 @@ const SignUpPage = () => {
 
         return true;
     };
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        localStorage.setItem("email", formData.email);
         const isFormValid = validateForm();
-        if (isFormValid === true) signup(formData);
+        try {
+            if (isFormValid === true) {
+                const response = await signup(formData);
+                navigate("/verify-email");
+            }
+        } catch (err) {
+            toast.error(err.message);
+        }
     };
 
     return (
